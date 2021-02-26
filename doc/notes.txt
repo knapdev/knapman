@@ -1,0 +1,33 @@
+
+Level
+    2d grid
+
+Entities
+    Pacman
+    Ghost
+        Inky
+        Blinky
+        Pinky
+        Clyde
+
+    Pellet/Power Pellet
+    Fruit
+
+State Machine
+    Game
+        Menu
+        Play
+        GameOver
+        Pause(?)
+
+    Ghost
+        Chase       - Move towards target pos
+        Scatter     - Move towards respective corners
+        Frightened  - Turn blue and avoid Pacman
+        Eaten       - Eyeballs, Move back to spawn room
+
+
+PATHFINDING
+
+Load maps from txt file
+

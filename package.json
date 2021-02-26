@@ -1,0 +1,21 @@
+{
+    "name": "knapman",
+    "version": "0.0.1",
+    "description": "A simple pacman clone.",
+    "author": "knapdev",
+    "license": "ISC",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+        "start": "node app",
+        "dev": "nodemon app"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/knapdev/knapman.git"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "nodemon": "^2.0.7"
+    }
+}
