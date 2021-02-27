@@ -10,6 +10,11 @@ import { Entity } from '../entities/entity.js';
 export class Player extends Entity{
     constructor(level, x, y){
         super(level, x, y);
+
+        this.score = 0;
+        this.lives = 3;
+
+        this.anim = [16, 17, 18, 19, 18, 17];
     }
 
     update(delta){
@@ -30,6 +35,28 @@ export class Player extends Entity{
             if(this.progress >= 1){
                 this.coord = this.dest;
                 this.progress = 0;
+
+                if(this.level.hasPellet(this.coord.x, this.coord.y)){
+                    this.level.setCell(this.coord.x, this.coord.y, 0);
+
+                    this.game.playSound('munch');
+
+                    this.level.pelletCount--;
+
+                    this.score += Game.PELLET_VALUE;
+                    document.getElementById('score').innerText = this.score;
+                }
+
+                if(this.level.hasPowerPellet(this.coord.x, this.coord.y)){
+                    this.level.setCell(this.coord.x, this.coord.y, 0);
+
+                    this.game.playSound('munch');
+
+                    this.level.pelletCount--;
+
+                    this.score += Game.POWER_PELLET_VALUE;
+                    document.getElementById('score').innerText = this.score;
+                }
             }
         }
     }
@@ -39,9 +66,9 @@ export class Player extends Entity{
         let py = Utils.lerp(this.coord.y, this.dest.y, this.progress);
 
         this.game.context.save();
-        this.game.context.translate(Math.floor((px * Game.TILE_SIZE) + 4), Math.floor((py * Game.TILE_SIZE) + 4));
+        this.game.context.translate(Math.floor((px * Game.TILE_SIZE) + 4), 16 + Math.floor((py * Game.TILE_SIZE) + 4));
         this.game.context.rotate(Utils.degToRad(this.direction * 90));
-        this.game.drawSprite(17, -4, -4, Game.TILE_SIZE, Game.TILE_SIZE);
+        this.game.drawSprite(this.anim[Math.floor(this.game.frames * 0.5) % this.anim.length], -4, -4, Game.TILE_SIZE, Game.TILE_SIZE);
         this.game.context.restore();
     }
 

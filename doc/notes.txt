@@ -17,6 +17,7 @@ State Machine
     Game
         Menu
         Play
+        Cutscene
         GameOver
         Pause(?)
 
@@ -29,5 +30,27 @@ State Machine
 
 PATHFINDING
 
-Load maps from txt file
+BG "music" speeds up the less Pellets are on the level
+Power Pellets blink
+Start with 4 lives, 1 single extra life at 10000 score
+Tiny blue numbers appear when eating a ghost denoting score increase amount
+Yellow READY! text appears below ghost room upon level start
+Pacman starts off "solid" upon level start and becomes solid again upon level finish
+HIGH SCORE displayed above score
+Pellets are a pink-ish color???
+Ghosts look up, down and sideways (instead of sideways up and down)
+Cutscene shows pacman being chased by blinky(red) first and then a large pacman chasing a scared ghost
+Level walls flash upon level finish (blue and white)
 
+Display fruits at bottom right
+Refactor level wall drawing code to increase FPS
+
+Fruit order
+    Cherry
+    Strawberry
+    Orange
+    Apple
+    Melon
+    *Starship
+    *Bell
+    *Key

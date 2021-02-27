@@ -12,6 +12,8 @@ export class Level{
         this.game = game;
 
         this.player = null;
+
+        this.pelletCount = 0;
     }
 
     getCell(x, y){
@@ -48,6 +50,10 @@ export class Level{
                     this.cells[j][i] = 0;
                 }else{
                     this.cells[j][i] = data.cells[j][i];
+                }
+
+                if(this.hasPellet(i, j) || this.hasPowerPellet(i, j)){
+                    this.pelletCount++;
                 }
             }
         }
@@ -88,7 +94,7 @@ export class Level{
 
                         tileIndex = 240 + configuration;
                     }
-                    this.game.drawSprite(tileIndex, Math.floor(i * Game.TILE_SIZE), Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
+                    this.game.drawSprite(tileIndex, Math.floor(i * Game.TILE_SIZE), 16 + Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
                 }
             }
         }
@@ -99,7 +105,23 @@ export class Level{
     isWalkable(x, y){
         //if there is a wall NOT walkable
         //if there is a ghost NOT walkable
-        if(this.getCell(x, y) == 0){
+        if(this.getCell(x, y) !== 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    hasPellet(x, y){
+        if(this.getCell(x, y) === 2){
+            return true;
+        }
+
+        return false;
+    }
+
+    hasPowerPellet(x, y){
+        if(this.getCell(x, y) === 3){
             return true;
         }
 
