@@ -13,38 +13,61 @@ Entities
     Pellet/Power Pellet
     Fruit
 
-State Machine
     Game
-        Menu
-        Play
-        Cutscene
-        GameOver
-        Pause(?)
+        States
+            Menu
+            LevelStart
+            Play
+            LevelEnd
+            Cutscene
+            GameOver
+            Pause(?)
 
     Ghost
-        Chase       - Move towards target pos
-        Scatter     - Move towards respective corners
-        Frightened  - Turn blue and avoid Pacman
-        Eaten       - Eyeballs, Move back to spawn room
+        State
+            Chase       - Move towards target pos
+            Scatter     - Move towards respective corners
+            Frightened  - Turn blue and avoid Pacman
+            Eaten       - Eyeballs, Move back to spawn room
 
+        Strategy
+            ChaseAggressive (Blinky)    Move directly towards pacman
+            ChaseAmbush     (Pinky)     Move to 4 tiles ahead of pacman
+            ChasePinch      (Inky)      Move to opposite of Blinky
+            ChaseRandom     (Clyde)     Moves towards pacman until close, then avoids until far
 
-    PATHFINDING
+            ScatterTopRight
+            ScatterTopLeft
+            ScatterBottomRight
+            ScatterBottomLeft
+
+            Frightened??
+            Eaten??
+
+[DONE] PATHFINDING
+[DONE] Power Pellets blink
+[DONE] Start with 4 lives, 1 single extra life at 10000 score
+[DONE] Refactor level wall drawing code to increase FPS
 
 BG "music" speeds up the less Pellets are on the level
-Power Pellets blink
-Start with 4 lives, 1 single extra life at 10000 score
+Separate sfx for power pellet
+sfx:
+    pacman dies
+    ghost frightened
+    ghost Eaten
+
 Tiny blue numbers appear when eating a ghost denoting score increase amount
 Yellow READY! text appears below ghost room upon level start
 Pacman starts off "solid" upon level start and becomes solid again upon level finish
     HIGH SCORE displayed above score
-Pellets are a pink-ish color???
-Ghosts look up, down and sideways (instead of sideways up and down)
+
 Cutscene shows pacman being chased by blinky(red) first and then a large pacman chasing a scared ghost
 Level walls flash upon level finish (blue and white)
 
 Display fruits at bottom right
-[DONE] Refactor level wall drawing code to increase FPS
 8-bit 8 neighbor bitmasking
+
+Sometimes ghost and pacman dont collide and instead pass by each other
 
 Fruit order
     Cherry
@@ -55,3 +78,7 @@ Fruit order
     *Starship
     *Bell
     *Key
+
+
+Pellets are a pink-ish color???
+Ghosts look up, down and sideways (instead of sideways up and down)

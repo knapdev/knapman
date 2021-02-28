@@ -86,13 +86,17 @@ export class Level{
         this.game.context.drawImage(this.wallImage, 0, 16);
 
         //draw pellets/fruit
+        let flag = Math.floor(this.game.frames * 0.1) % 2;
         for(let j = 0; j < this.height; j++){
             for(let i = 0; i < this.width; i++){
                 let cell = this.getCell(i, j);
-                if(cell !== 0){
-                    let tileIndex = cell;
-                    if(cell !== 1){ //If the cell is NOT a wall
-                        this.game.drawSprite(tileIndex, Math.floor(i * Game.TILE_SIZE), 16 + Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
+                if(cell !== 0 && cell !== 1){
+                    if(cell === 3){
+                        if(flag === 1){
+                            this.game.drawSprite(cell, Math.floor(i * Game.TILE_SIZE), 16 + Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
+                        }
+                    }else{
+                        this.game.drawSprite(cell, Math.floor(i * Game.TILE_SIZE), 16 + Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
                     }
                 }
             }
