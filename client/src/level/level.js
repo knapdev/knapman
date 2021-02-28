@@ -14,6 +14,8 @@ export class Level{
         this.player = null;
 
         this.pelletCount = 0;
+
+        this.wallImage = null;
     }
 
     getCell(x, y){
@@ -57,6 +59,8 @@ export class Level{
                 }
             }
         }
+
+        this.createWallImage();
     }
 
     update(delta){
@@ -64,37 +68,18 @@ export class Level{
     }
 
     draw(){
+        //draw wall image
+        this.game.context.drawImage(this.wallImage, 0, 16);
+
+        //draw pellets/fruit
         for(let j = 0; j < this.height; j++){
             for(let i = 0; i < this.width; i++){
                 let cell = this.getCell(i, j);
                 if(cell !== 0){
                     let tileIndex = cell;
-                    if(cell === 1){ //If the cell is a floor
-                        let configuration = 0;
-
-                        let north = this.getCell(i, j - 1);
-                        if(north === 1){
-                            configuration += 1;
-                        }
-
-                        let west = this.getCell(i - 1, j);
-                        if(west === 1){
-                            configuration += 2;
-                        }
-
-                        let south = this.getCell(i, j + 1);
-                        if(south === 1){
-                            configuration += 4;
-                        }
-
-                        let east = this.getCell(i + 1, j);
-                        if(east === 1){
-                            configuration += 8;
-                        }
-
-                        tileIndex = 240 + configuration;
+                    if(cell !== 1){ //If the cell is NOT a wall
+                        this.game.drawSprite(tileIndex, Math.floor(i * Game.TILE_SIZE), 16 + Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
                     }
-                    this.game.drawSprite(tileIndex, Math.floor(i * Game.TILE_SIZE), 16 + Math.floor(j * Game.TILE_SIZE), Game.TILE_SIZE, Game.TILE_SIZE);
                 }
             }
         }
@@ -126,6 +111,55 @@ export class Level{
         }
 
         return false;
+    }
+
+    createWallImage(){
+        let offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = this.width * Game.TILE_SIZE;
+        offscreenCanvas.height = this.height * Game.TILE_SIZE;
+
+        let offscreenContext = offscreenCanvas.getContext('2d');
+
+        for(let j = 0; j < this.height; j++){
+            for(let i = 0; i < this.width; i++){
+                let cell = this.getCell(i, j);
+                if(cell === 1){ //If the cell is a wall
+                    let tileIndex = cell;
+                    let configuration = 0;
+
+                    let north = this.getCell(i, j - 1);
+                    if(north === 1){
+                        configuration += 1;
+                    }
+
+                    let west = this.getCell(i - 1, j);
+                    if(west === 1){
+                        configuration += 2;
+                    }
+
+                    let south = this.getCell(i, j + 1);
+                    if(south === 1){
+                        configuration += 4;
+                    }
+
+                    let east = this.getCell(i + 1, j);
+                    if(east === 1){
+                        configuration += 8;
+                    }
+
+                    tileIndex = 240 + configuration;
+
+                    let ix = Math.floor(tileIndex % Game.TILESET_WIDTH) * Game.TILE_SIZE;
+                    let iy = Math.floor(tileIndex / Game.TILESET_WIDTH) * Game.TILE_SIZE;
+                    let x = Math.floor(i * Game.TILE_SIZE);
+                    let y = Math.floor(j * Game.TILE_SIZE);
+                    offscreenContext.drawImage(this.game.tileset, ix, iy, Game.TILE_SIZE, Game.TILE_SIZE, x, y, Game.TILE_SIZE, Game.TILE_SIZE);
+                }                
+            }
+        }
+
+        this.wallImage = new Image();
+        this.wallImage.src = offscreenCanvas.toDataURL();
     }
 
     //helpers

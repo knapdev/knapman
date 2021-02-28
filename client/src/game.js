@@ -55,6 +55,9 @@ export class Game{
         //load tileset
         this.loadTileset('/client/res/imgs/tileset.png', () => {
 
+            this.level = new Level(this);
+            this.level.load(level_data);
+
             this.resetLevel();
 
             this.start();
@@ -183,9 +186,6 @@ export class Game{
     }
 
     resetLevel(){
-        this.level = new Level(this);
-        this.level.load(level_data);
-
         this.level.player.score = 0;
         document.getElementById('score').innerText = 0;
 
