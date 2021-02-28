@@ -111,7 +111,7 @@ export class Game{
         // Lives
         for(let i = 0; i < this.level.player.lives; i++){
             this.context.save();
-            this.context.translate(4 + (i * 10), 16 + (this.level.height * 8) + 8);
+            this.context.translate(16 + (i * 10), 16 + (this.level.height * 8) + 8);
             this.context.rotate(Utils.degToRad(-90));
             this.drawSprite(18, 0, 0, 8, 8);
             this.context.restore();
@@ -189,7 +189,7 @@ export class Game{
         this.level.player.score = 0;
         document.getElementById('score').innerText = 0;
 
-        this.level.player.lives = 3;
+        this.level.player.lives = this.level.player.startingLives;
     }
 }
 

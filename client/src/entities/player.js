@@ -12,7 +12,8 @@ export class Player extends Entity{
         super(level, x, y);
 
         this.score = 0;
-        this.lives = 3;
+        this.lives = 0;
+        this.startingLives = 4;
 
         this.anim = [16, 17, 18, 19, 18, 17];
     }
