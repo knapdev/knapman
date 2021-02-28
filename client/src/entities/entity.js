@@ -6,6 +6,7 @@ import { Direction } from '../level/direction.js';
 export class Entity{
     constructor(level, x, y){
         this.coord = new Coord(x, y);
+        this.startingCoord = new Coord(x, y);
         this.dest = new Coord(x, y);
         this.progress = 0;
         this.direction = Direction.NORTH;
@@ -32,5 +33,11 @@ export class Entity{
 
     setDir(dir){
         this.direction = dir;
+    }
+
+    reset(){
+        this.coord = new Coord(this.startingCoord.x, this.startingCoord.y);
+        this.dest = new Coord(this.coord.x, this.coord.y);
+        this.progress = 0;
     }
 }

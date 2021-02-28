@@ -1,7 +1,11 @@
 'use strict';
 
+import { Ghost } from "../entities/ghost.js";
 import { Player } from "../entities/player.js";
 import { Game } from "../game.js";
+import Utils from "../utils/utils.js";
+import { Coord } from "./coord.js";
+import { Direction } from "./direction.js";
 
 export class Level{
     constructor(game){
@@ -12,6 +16,7 @@ export class Level{
         this.game = game;
 
         this.player = null;
+        this.ghosts = [];
 
         this.pelletCount = 0;
 
@@ -60,11 +65,20 @@ export class Level{
             }
         }
 
+        this.ghosts.push(new Ghost(this, 12, 15, 0));
+        //this.ghosts.push(new Ghost(this, 13, 15, 1));
+        //this.ghosts.push(new Ghost(this, 14, 15, 2));
+        //this.ghosts.push(new Ghost(this, 15, 15, 3));
+
         this.createWallImage();
     }
 
     update(delta){
         this.player.update(delta);
+
+        for(let g in this.ghosts){
+            this.ghosts[g].update(delta);
+        }
     }
 
     draw(){
@@ -85,6 +99,10 @@ export class Level{
         }
 
         this.player.draw();
+
+        for(let g in this.ghosts){
+            this.ghosts[g].draw();
+        }
     }
 
     isWalkable(x, y){
@@ -108,6 +126,39 @@ export class Level{
     hasPowerPellet(x, y){
         if(this.getCell(x, y) === 3){
             return true;
+        }
+
+        return false;
+    }
+
+    hasGhost(x, y){
+        for(let i = 0; i < this.ghosts.length; i++){
+            if(this.ghosts[i].coord.isEqual(new Coord(x, y))){
+                if(this.ghosts[i].progress < 0.5){
+                    return true;
+                }                
+            }
+
+            if(this.ghosts[i].dest.isEqual(new Coord(x, y))){
+                if(this.ghosts[i].progress >= 0.5){
+                    return true;
+                }                
+            }
+        }
+
+        return null;
+    }
+
+    hasPlayer(x, y){
+        if(this.player.coord.isEqual(new Coord(x, y))){
+            if(this.player.progress < 0.5){
+                return true;
+            }
+        }
+        if(this.player.dest.isEqual(new Coord(x, y))){
+            if(this.player.progress >= 0.5){
+                return true;
+            }
         }
 
         return false;
@@ -160,6 +211,98 @@ export class Level{
 
         this.wallImage = new Image();
         this.wallImage.src = offscreenCanvas.toDataURL();
+    }
+
+    //pathfinding
+    findPath(start, end){
+
+        let self = this;
+
+        function Neighbors(x, y){
+            let result = [];
+            let coord = new Coord(x, y);
+
+            let northNeighbor = coord.getNeighbor(Direction.NORTH);
+            if(self.isWalkable(northNeighbor.x, northNeighbor.y)){
+                result.push(northNeighbor);
+            }
+
+            let eastNeighbor = coord.getNeighbor(Direction.EAST);
+            if(self.isWalkable(eastNeighbor.x, eastNeighbor.y)){
+                result.push(eastNeighbor);
+            }
+
+            let southNeighbor = coord.getNeighbor(Direction.SOUTH);
+            if(self.isWalkable(southNeighbor.x, southNeighbor.y)){
+                result.push(southNeighbor);
+            }
+
+            let westNeighbor = coord.getNeighbor(Direction.WEST);
+            if(self.isWalkable(westNeighbor.x, westNeighbor.y)){
+                result.push(westNeighbor);
+            }
+
+            return result;
+        }
+
+        function PathNode(parent, coord){
+            let newNode = {
+                parent: parent,
+                coord: coord,
+                f: 0,
+                g: 0
+            };
+            return newNode;
+        }
+
+        function calculatePath(){
+            //get start and end nodes
+            let pathStart = PathNode(null, start);
+            let pathEnd = PathNode(null, end);
+
+            let aStar = new Array(self.width * self.height);
+            let open = [pathStart];
+            let closed = [];
+            let result = [];
+            let myNeighbors;
+            let myNode;
+            let myPath;
+            let length, max, min;
+            while(length = open.length){
+                max = self.width * self.height;
+                min = -1;
+                for(let i = 0; i < length; i++){
+                    if(open[i].f < max){
+                        max = open[i].f;
+                        min = i;
+                    }
+                }
+
+                myNode = open.splice(min, 1)[0];
+                if(myNode.coord.isEqual(pathEnd.coord)){
+                    myPath = closed[closed.push(myNode) - 1];
+                    do{
+                        result.push(new Coord(myPath.coord.x, myPath.coord.y));
+                    }while(myPath = myPath.parent);
+                    aStar = closed = open = [];
+                    result.reverse();
+                }else{
+                    myNeighbors = Neighbors(myNode.coord.x, myNode.coord.y);
+                    for(let i = 0; i < myNeighbors.length; i++){
+                        myPath = PathNode(myNode, myNeighbors[i]);
+                        if(!aStar[myPath.coord.getHash()]){
+                            myPath.g = myNode.g + Utils.distance(myNeighbors[i], myNode.coord);
+                            myPath.f = myPath.g + Utils.distance(myNeighbors[i], pathEnd.coord);
+                            open.push(myPath);
+                            aStar[myPath.coord.getHash()] = true;
+                        }
+                    }
+                    closed.push(myNode);
+                }
+            }
+            return result;
+        }
+        return calculatePath();
     }
 
     //helpers

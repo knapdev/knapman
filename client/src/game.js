@@ -56,9 +56,7 @@ export class Game{
         this.loadTileset('/client/res/imgs/tileset.png', () => {
 
             this.level = new Level(this);
-            this.level.load(level_data);
-
-            this.resetLevel();
+            this.restartLevel();
 
             this.start();
         });
@@ -98,7 +96,7 @@ export class Game{
         this.level.update(delta);
 
         if(this.level.pelletCount <= 0){
-            this.resetLevel();
+            this.restartLevel();
         }
     }
 
@@ -185,11 +183,23 @@ export class Game{
         }
     }
 
-    resetLevel(){
+    restartLevel(){
+        this.level.load(level_data);
+        
         this.level.player.score = 0;
         document.getElementById('score').innerText = 0;
 
         this.level.player.lives = this.level.player.startingLives;
+
+        this.resetLevel();
+    }
+
+    resetLevel(){
+        this.level.player.reset();
+
+        for(let g in this.level.ghosts){
+            this.level.ghosts[g].reset();
+        }
     }
 }
 
