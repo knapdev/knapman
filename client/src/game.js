@@ -115,6 +115,10 @@ export class Game{
             this.context.restore();
         }
         // Score
+        let scoreArray = Array.from(String(this.level.player.score), Number);
+        for(let i = 0; i < scoreArray.length; i++){
+            this.drawSprite(224 + scoreArray[i], (14*8) + (i * 8), 8, 8, 8);
+        }
         // Fruit
     }
 
@@ -185,9 +189,8 @@ export class Game{
 
     restartLevel(){
         this.level.load(level_data);
-        
+
         this.level.player.score = 0;
-        document.getElementById('score').innerText = 0;
 
         this.level.player.lives = this.level.player.startingLives;
 

@@ -45,7 +45,6 @@ export class Player extends Entity{
                     this.level.pelletCount--;
 
                     this.score += Game.PELLET_VALUE;
-                    document.getElementById('score').innerText = this.score;
                 }
 
                 if(this.level.hasPowerPellet(this.coord.x, this.coord.y)){
@@ -56,7 +55,6 @@ export class Player extends Entity{
                     this.level.pelletCount--;
 
                     this.score += Game.POWER_PELLET_VALUE;
-                    document.getElementById('score').innerText = this.score;
                 }
             }
         }
