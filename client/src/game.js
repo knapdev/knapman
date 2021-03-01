@@ -7,6 +7,9 @@ import { Direction } from './level/direction.js';
 
 import { Level } from './level/level.js';
 
+import { StateMachine } from './state/statemachine.js';
+import { MenuState } from './gamestates/menustate.js';
+
 export class Game{
     static TILESET_WIDTH = 16;
     static TILE_SIZE = 8;
@@ -32,9 +35,9 @@ export class Game{
 
         this.tileset = null;
 
-        this.level = null;
-
         this.sounds = [];
+
+        this.state = null;
 
         this.init();
     }
@@ -52,11 +55,12 @@ export class Game{
 
         this.setupSoundPool('munch', '/client/res/sfx/munch.mp3', 5);
 
+        this.state = new StateMachine();
+
         //load tileset
         this.loadTileset('/client/res/imgs/tileset.png', () => {
 
-            this.level = new Level(this);
-            this.restartLevel();
+            this.state.push(new MenuState(this));
 
             this.start();
         });
@@ -83,43 +87,11 @@ export class Game{
     }
 
     update(delta){
-        if(Keyboard.getKey(Keyboard.KeyCode.UP)){
-            this.level.player.setInputDir(Direction.NORTH);
-        }else if(Keyboard.getKey(Keyboard.KeyCode.RIGHT)){
-            this.level.player.setInputDir(Direction.EAST);
-        }else if(Keyboard.getKey(Keyboard.KeyCode.DOWN)){
-            this.level.player.setInputDir(Direction.SOUTH);
-        }else if(Keyboard.getKey(Keyboard.KeyCode.LEFT)){
-            this.level.player.setInputDir(Direction.WEST);
-        }
-
-        this.level.update(delta);
-
-        if(this.level.pelletCount <= 0){
-            this.restartLevel();
-        }
+        this.state.update(delta);
     }
 
     draw(){
-        this.clear();
-
-        this.level.draw();
-
-        // Draw UI
-        // Lives
-        for(let i = 0; i < this.level.player.lives; i++){
-            this.context.save();
-            this.context.translate(16 + (i * 10), 16 + (this.level.height * 8) + 8);
-            this.context.rotate(Utils.degToRad(-90));
-            this.drawSprite(18, 0, 0, 8, 8);
-            this.context.restore();
-        }
-        // Score
-        let scoreArray = Array.from(String(this.level.player.score), Number);
-        for(let i = 0; i < scoreArray.length; i++){
-            this.drawSprite(224 + scoreArray[i], (14*8) + (i * 8), 8, 8, 8);
-        }
-        // Fruit
+        this.state.draw();
     }
 
     resize(){
@@ -186,61 +158,4 @@ export class Game{
             }
         }
     }
-
-    restartLevel(){
-        this.level.load(level_data);
-
-        this.level.player.score = 0;
-
-        this.level.player.lives = this.level.player.startingLives;
-
-        this.resetLevel();
-    }
-
-    resetLevel(){
-        this.level.player.reset();
-
-        for(let g in this.level.ghosts){
-            this.level.ghosts[g].reset();
-        }
-    }
 }
-
-//28x31
-let level_data = {
-    width: 28,
-    height: 31,
-    cells: [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-        [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-        [1, 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 3, 1],
-        [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-        [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-        [1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-        [1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-        [1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0,-1, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-        [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-        [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-        [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-        [1, 3, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 3, 1],
-        [1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1],
-        [1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1],
-        [1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1],
-        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-        [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    ]
-};

@@ -38,15 +38,6 @@ export class Ghost extends Entity{
                 this.lastCoord = new Coord(this.coord.x, this.coord.y);
                 this.coord = new Coord(this.dest.x, this.dest.y);
                 this.progress = 0;
-
-                if(this.level.hasPlayer(this.coord.x, this.coord.y)){
-                    this.level.player.lives--;
-                    if(this.level.player.lives <= 0){
-                        this.game.restartLevel();
-                    }else{
-                        this.game.resetLevel();
-                    }                    
-                }
             }
         }
     }

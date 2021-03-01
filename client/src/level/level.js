@@ -220,29 +220,27 @@ export class Level{
     //pathfinding
     findPath(start, end){
 
-        let self = this;
-
         function Neighbors(x, y){
             let result = [];
             let coord = new Coord(x, y);
 
             let northNeighbor = coord.getNeighbor(Direction.NORTH);
-            if(self.isWalkable(northNeighbor.x, northNeighbor.y)){
+            if(this.isWalkable(northNeighbor.x, northNeighbor.y)){
                 result.push(northNeighbor);
             }
 
             let eastNeighbor = coord.getNeighbor(Direction.EAST);
-            if(self.isWalkable(eastNeighbor.x, eastNeighbor.y)){
+            if(this.isWalkable(eastNeighbor.x, eastNeighbor.y)){
                 result.push(eastNeighbor);
             }
 
             let southNeighbor = coord.getNeighbor(Direction.SOUTH);
-            if(self.isWalkable(southNeighbor.x, southNeighbor.y)){
+            if(this.isWalkable(southNeighbor.x, southNeighbor.y)){
                 result.push(southNeighbor);
             }
 
             let westNeighbor = coord.getNeighbor(Direction.WEST);
-            if(self.isWalkable(westNeighbor.x, westNeighbor.y)){
+            if(this.isWalkable(westNeighbor.x, westNeighbor.y)){
                 result.push(westNeighbor);
             }
 
@@ -264,7 +262,7 @@ export class Level{
             let pathStart = PathNode(null, start);
             let pathEnd = PathNode(null, end);
 
-            let aStar = new Array(self.width * self.height);
+            let aStar = new Array(this.width * this.height);
             let open = [pathStart];
             let closed = [];
             let result = [];
@@ -273,7 +271,7 @@ export class Level{
             let myPath;
             let length, max, min;
             while(length = open.length){
-                max = self.width * self.height;
+                max = this.width * this.height;
                 min = -1;
                 for(let i = 0; i < length; i++){
                     if(open[i].f < max){
