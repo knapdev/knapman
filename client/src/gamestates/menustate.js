@@ -29,6 +29,6 @@ export class MenuState extends State{
         let canvasContext = this.context.context;
         canvasContext.fillStyle = 'white';
         canvasContext.font = '12px Arial';
-        canvasContext.fillText('Press SPACE to start!', 0, 0);
+        canvasContext.fillText('Press SPACE to start!', 0, 16);
     }
 }

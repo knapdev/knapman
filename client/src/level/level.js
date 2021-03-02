@@ -65,6 +65,7 @@ export class Level{
             }
         }
 
+        this.ghosts = [];
         this.ghosts.push(new Ghost(this, 12, 15, 0));
         //this.ghosts.push(new Ghost(this, 13, 15, 1));
         //this.ghosts.push(new Ghost(this, 14, 15, 2));
@@ -133,6 +134,24 @@ export class Level{
         }
 
         return false;
+    }
+
+    getGhost(x, y){
+        for(let i = 0; i < this.ghosts.length; i++){
+            if(this.ghosts[i].coord.isEqual(new Coord(x, y))){
+                if(this.ghosts[i].progress < 0.5){
+                    return this.ghosts[i];
+                }                
+            }
+
+            if(this.ghosts[i].dest.isEqual(new Coord(x, y))){
+                if(this.ghosts[i].progress >= 0.5){
+                    return this.ghosts[i];
+                }                
+            }
+        }
+
+        return null;
     }
 
     hasGhost(x, y){

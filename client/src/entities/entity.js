@@ -10,6 +10,7 @@ export class Entity{
         this.dest = new Coord(x, y);
         this.progress = 0;
         this.direction = Direction.NORTH;
+        this.speed = 4
 
         this.level = level;
         this.game = level.game;
@@ -39,5 +40,7 @@ export class Entity{
         this.coord = new Coord(this.startingCoord.x, this.startingCoord.y);
         this.dest = new Coord(this.coord.x, this.coord.y);
         this.progress = 0;
+
+        this.direction = Direction.NORTH;
     }
 }

@@ -6,13 +6,14 @@ import { Game } from "../game.js";
 import { Coord } from "../level/coord.js";
 
 import { Entity } from '../entities/entity.js';
+import { Ghost } from '../entities/ghost.js';
 
 export class Player extends Entity{
     constructor(level, x, y){
         super(level, x, y);
 
         this.score = 0;
-        this.lives = 0;
+        this.lives = 4;
         this.startingLives = 4;
 
         this.anim = [16, 17, 18, 19, 18, 17];
@@ -28,7 +29,7 @@ export class Player extends Entity{
             }
         }else{  //if we are currently NOT at our destination
             let totalDist = Utils.distance(this.coord, this.dest);
-            let tickDist = 4 * delta;
+            let tickDist = this.speed * delta;
             let tickPercent = tickDist / totalDist;
 
             this.progress += tickPercent;
@@ -36,6 +37,14 @@ export class Player extends Entity{
             if(this.progress >= 1){
                 this.coord = this.dest;
                 this.progress = 0;
+
+                if(this.coord.x === -1){
+                    this.coord = new Coord(28, this.coord.y);
+                    this.dest = new Coord(this.coord.x, this.coord.y);
+                }else if(this.coord.x === 28){
+                    this.coord = new Coord(-1, this.coord.y);
+                    this.dest = new Coord(this.coord.x, this.coord.y);
+                }
 
                 if(this.level.hasPellet(this.coord.x, this.coord.y)){
                     this.level.setCell(this.coord.x, this.coord.y, 0);
@@ -55,6 +64,8 @@ export class Player extends Entity{
                     this.level.pelletCount--;
 
                     this.score += Game.POWER_PELLET_VALUE;
+
+                    this.scareGhosts();
                 }
             }
         }
@@ -77,6 +88,15 @@ export class Player extends Entity{
 
             if(this.level.isWalkable(neighbor.x, neighbor.y)){
                 this.setDir(dir);
+            }
+        }
+    }
+
+    scareGhosts(){
+        for(let i = 0; i < this.level.ghosts.length; i++){
+            let ghost = this.level.ghosts[i];
+            if(ghost.state !== Ghost.State.FRIGHTENED && ghost.state !== Ghost.State.EATEN){
+                ghost.scare();
             }
         }
     }

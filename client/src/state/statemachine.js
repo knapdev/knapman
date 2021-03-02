@@ -18,6 +18,10 @@ export class StateMachine {
         }
     }
 
+    clear(){
+        this.stateStack = [];
+    }
+
     get(){
         return this.stateStack[this.stateStack.length-1];
     }

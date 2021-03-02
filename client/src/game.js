@@ -9,6 +9,7 @@ import { Level } from './level/level.js';
 
 import { StateMachine } from './state/statemachine.js';
 import { MenuState } from './gamestates/menustate.js';
+import { PlayState } from './gamestates/playstate.js';
 
 export class Game{
     static TILESET_WIDTH = 16;
@@ -36,6 +37,9 @@ export class Game{
         this.tileset = null;
 
         this.sounds = [];
+
+        this.fruitCount = 1;
+        this.levelCount = 1;
 
         this.state = null;
 
@@ -92,6 +96,26 @@ export class Game{
 
     draw(){
         this.state.draw();
+    }
+
+    nextLevel(){
+        this.levelCount++;
+        console.log('Level ' + this.levelCount);
+
+        if(this.fruitCount <= 4){
+            this.fruitCount++;
+        }
+
+        this.state.pop();
+        this.state.push(new PlayState(this));
+    }
+
+    restartGame(){
+        this.levelCount = 1;
+        this.fruitCount = 1;
+        
+        this.state.pop();
+        this.state.push(new PlayState(this));
     }
 
     resize(){

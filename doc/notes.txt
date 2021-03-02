@@ -25,6 +25,7 @@ Entities
 
     Ghost
         State
+            *Exit spawn room
             Chase       - Move towards target pos
             Scatter     - Move towards respective corners
             Frightened  - Turn blue and avoid Pacman
@@ -64,10 +65,11 @@ Pacman starts off "solid" upon level start and becomes solid again upon level fi
 Cutscene shows pacman being chased by blinky(red) first and then a large pacman chasing a scared ghost
 Level walls flash upon level finish (blue and white)
 
-Display fruits at bottom right
+[DONE] Display fruits at bottom right
 8-bit 8 neighbor bitmasking
 
-Sometimes ghost and pacman dont collide and instead pass by each other
+??Sometimes ghost and pacman dont collide and instead pass by each other
+
 
 Fruit order
     Cherry
@@ -80,5 +82,10 @@ Fruit order
     *Key
 
 
-Pellets are a pink-ish color???
-Ghosts look up, down and sideways (instead of sideways up and down)
+
+Increase score when eating frightened ghost
+    Keep track of eaten ghost count per power pellet
+
+Scatter mode    (timer)
+Fruit spawning  (timer)
+
